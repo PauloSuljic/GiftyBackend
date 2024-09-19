@@ -1,6 +1,64 @@
-namespace Gifty.Application.Services;
+using Gifty.Application.DTOs;
+using Gifty.Application.Responses;
+using Gifty.Application.Services;
+using Gifty.Domain.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
-public class UserService
+namespace Gifty.Application.Services
 {
-    
+    public class UserService : IUserService
+    {
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly ITokenService _tokenService;
+
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _tokenService = tokenService;
+        }
+
+        public async Task<ServiceResponse<string>> RegisterAsync(RegisterDTO registerDto)
+        {
+            var user = new AppUser
+            {
+                UserName = registerDto.Username,
+                Email = registerDto.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+            if (!result.Succeeded)
+            {
+                return ServiceResponse<string>.FailureResponse("User registration failed.");
+            }
+
+            var token = _tokenService.CreateToken(user);
+            return ServiceResponse<string>.SuccessResponse(token, "User registered successfully.");
+        }
+
+        public async Task<ServiceResponse<string>> LoginAsync(LoginDTO loginDto)
+        {
+            var user = await _userManager.FindByNameAsync(loginDto.Email);
+            if (user == null)
+            {
+                return ServiceResponse<string>.FailureResponse("Invalid username.");
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            if (!result.Succeeded)
+            {
+                return ServiceResponse<string>.FailureResponse("Invalid password.");
+            }
+
+            var token = _tokenService.CreateToken(user);
+            return ServiceResponse<string>.SuccessResponse(token, "User logged in successfully.");
+        }
+
+        public void Logout()
+        {
+            _signInManager.SignOutAsync().Wait();
+        }
+    }
 }

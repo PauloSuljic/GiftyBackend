@@ -1,6 +1,8 @@
+using Gifty.Domain.Models;
+
 namespace Gifty.Data.Repositories;
 
-public interface IUserRepository
+public interface IUserRepository : IRepository<AppUser>
 {
     
 }

@@ -1,0 +1,40 @@
+bin/
+obj/
+riderModule.iml
+/_ReSharper.Caches/
+
+# .NET
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.ncb
+*.suo
+*.userosscache
+*.userprefs
+
+# User-specific files
+*.env
+
+# JetBrains Rider
+.idea/
+
+# Node.js
+node_modules/
+
+# ASP.NET Core Secrets
+secrets.json
+
+# Docker
+Dockerfile
+docker-compose.yml
+*.dockerignore
+
+# NuGet
+packages/

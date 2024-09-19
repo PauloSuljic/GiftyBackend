@@ -1,6 +1,13 @@
-namespace Gifty.Application.Services;
+using Gifty.Domain.Models;
 
-public class TokenService
+namespace Gifty.Application.Services
 {
-    
+    public class TokenService : ITokenService
+    {
+        public string CreateToken(AppUser user)
+        {
+            // Your token creation logic here
+            return "generatedToken";
+        }
+    }
 }

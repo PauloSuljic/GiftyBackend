@@ -1,6 +1,9 @@
-namespace Gifty.Application.Services;
+using Gifty.Domain.Models;
 
-public interface ITokenService
+namespace Gifty.Application.Services
 {
-    
+    public interface ITokenService
+    {
+        string CreateToken(AppUser user);
+    }
 }
