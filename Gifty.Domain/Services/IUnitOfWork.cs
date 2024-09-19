@@ -7,6 +7,5 @@ public interface IUnitOfWork
 {
     IRepository<Friend> Friends { get; }
     IRepository<Wishlist> Wishlists { get; }
-    IRepository<BirthdayReminder> BirthdayReminders { get; }
     Task SaveChangesAsync();
 }

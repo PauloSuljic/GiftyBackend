@@ -1,7 +1,10 @@
 using Gifty.Application.DTOs;
 using Gifty.Application.Responses;
 using Gifty.Domain.Models;
-using Gifty.Data.Repositories;
+using Gifty.Domain.Repositories;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Gifty.Application.Services
 {
@@ -14,40 +17,65 @@ namespace Gifty.Application.Services
             _friendRepository = friendRepository;
         }
 
-        public async Task<ServiceResponse<IEnumerable<FriendDTO>>> GetFriendsAsync()
+        // Get all friends for a specific user
+        public async Task<ServiceResponse<IEnumerable<FriendDTO>>> GetFriendsForUserAsync(string userId)
         {
-            var friends = await _friendRepository.GetAllAsync();
+            var friends = await _friendRepository.GetFriendsByUserIdAsync(userId);
             var friendDtos = friends.Select(f => new FriendDTO
             {
                 Id = f.Id,
-                FullName = f.Name,
+                FullName = f.FullName,
                 BirthDate = f.Birthday
             }).ToList();
 
-            return ServiceResponse<IEnumerable<FriendDTO>>.SuccessResponse(friendDtos,
-                "Friends retrieved successfully.");
+            return ServiceResponse<IEnumerable<FriendDTO>>.SuccessResponse(friendDtos, "Friends retrieved successfully.");
         }
 
-        public async Task<ServiceResponse<FriendDTO>> AddFriendAsync(AddFriendDTO friendDto)
+        // Get a specific friend by ID for a specific user
+        public async Task<ServiceResponse<FriendDTO>> GetFriendByIdAsync(string userId, int friendId)
+        {
+            var friend = await _friendRepository.GetFriendByIdAndUserIdAsync(friendId, userId);
+            if (friend == null)
+            {
+                return ServiceResponse<FriendDTO>.FailureResponse("Friend not found.");
+            }
+
+            var friendDto = new FriendDTO
+            {
+                Id = friend.Id,
+                FullName = friend.FullName,
+                BirthDate = friend.Birthday
+            };
+
+            return ServiceResponse<FriendDTO>.SuccessResponse(friendDto, "Friend retrieved successfully.");
+        }
+
+        // Add a friend for a specific user
+        public async Task<ServiceResponse<FriendDTO>> AddFriendAsync(string userId, AddFriendDTO friendDto)
         {
             var friend = new Friend
             {
-                Name = friendDto.FullName,
-                Birthday = friendDto.BirthDate
+                FullName = friendDto.FullName,
+                Birthday = friendDto.BirthDate,
+                UserId = userId
             };
 
             await _friendRepository.AddAsync(friend);
-            return ServiceResponse<FriendDTO>.SuccessResponse(new FriendDTO
+
+            var result = new FriendDTO
             {
                 Id = friend.Id,
-                FullName = friend.Name,
+                FullName = friend.FullName,
                 BirthDate = friend.Birthday
-            }, "Friend added successfully.");
+            };
+
+            return ServiceResponse<FriendDTO>.SuccessResponse(result, "Friend added successfully.");
         }
 
-        public async Task<ServiceResponse<string>> RemoveFriendAsync(int friendId)
+        // Remove a friend for a specific user
+        public async Task<ServiceResponse<string>> RemoveFriendAsync(string userId, int friendId)
         {
-            var friend = await _friendRepository.GetByIdAsync(friendId);
+            var friend = await _friendRepository.GetFriendByIdAndUserIdAsync(friendId, userId);
             if (friend == null)
             {
                 return ServiceResponse<string>.FailureResponse("Friend not found.");

@@ -1,9 +1,12 @@
 using Gifty.Domain.Models;
 
-namespace Gifty.Data.Repositories
+namespace Gifty.Domain.Repositories
 {
-    public interface IFriendRepository : IRepository<Friend>
+    public interface IFriendRepository
     {
-        // Add any specific methods for Friend repository
+        Task<IEnumerable<Friend>> GetFriendsByUserIdAsync(string userId);
+        Task<Friend?> GetFriendByIdAndUserIdAsync(int friendId, string userId); // Nullable return
+        Task AddAsync(Friend friend);
+        Task DeleteAsync(Friend friend);
     }
 }
