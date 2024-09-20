@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Gifty.Application.DTOs;
 using Gifty.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gifty.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WishlistController : ControllerBase
@@ -23,7 +25,7 @@ namespace Gifty.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateWishlist(CreateWishlistDTO wishlistDto)
+        public async Task<IActionResult> CreateWishlist([FromBody] CreateWishlistDTO wishlistDto)
         {
             var result = await _wishlistService.CreateWishlistAsync(wishlistDto);
             if (!result.Success)

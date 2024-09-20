@@ -24,8 +24,10 @@ namespace Gifty.Application.Services
             var friendDtos = friends.Select(f => new FriendDTO
             {
                 Id = f.Id,
-                FullName = f.FullName,
-                BirthDate = f.Birthday
+                UserId = f.UserId,
+                FriendId = f.FriendId,
+                CreatedAt = f.CreatedAt,
+                Status = f.Status
             }).ToList();
 
             return ServiceResponse<IEnumerable<FriendDTO>>.SuccessResponse(friendDtos, "Friends retrieved successfully.");
@@ -43,33 +45,13 @@ namespace Gifty.Application.Services
             var friendDto = new FriendDTO
             {
                 Id = friend.Id,
-                FullName = friend.FullName,
-                BirthDate = friend.Birthday
+                UserId = friend.UserId,
+                FriendId = friend.FriendId,
+                CreatedAt = friend.CreatedAt,
+                Status = friend.Status
             };
 
             return ServiceResponse<FriendDTO>.SuccessResponse(friendDto, "Friend retrieved successfully.");
-        }
-
-        // Add a friend for a specific user
-        public async Task<ServiceResponse<FriendDTO>> AddFriendAsync(string userId, AddFriendDTO friendDto)
-        {
-            var friend = new Friend
-            {
-                FullName = friendDto.FullName,
-                Birthday = friendDto.BirthDate,
-                UserId = userId
-            };
-
-            await _friendRepository.AddAsync(friend);
-
-            var result = new FriendDTO
-            {
-                Id = friend.Id,
-                FullName = friend.FullName,
-                BirthDate = friend.Birthday
-            };
-
-            return ServiceResponse<FriendDTO>.SuccessResponse(result, "Friend added successfully.");
         }
 
         // Remove a friend for a specific user

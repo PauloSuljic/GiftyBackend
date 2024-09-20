@@ -5,16 +5,19 @@ using Gifty.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Gifty.Data.Repositories;
+using Microsoft.AspNetCore.Http;
 
 namespace Gifty.Application.Services
 {
     public class WishlistService : IWishlistService
     {
         private readonly IWishlistRepository _wishlistRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public WishlistService(IWishlistRepository wishlistRepository)
+        public WishlistService(IWishlistRepository wishlistRepository, IHttpContextAccessor httpContextAccessor)
         {
             _wishlistRepository = wishlistRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ServiceResponse<IEnumerable<WishlistDTO>>> GetWishlistsAsync()
@@ -31,12 +34,22 @@ namespace Gifty.Application.Services
 
         public async Task<ServiceResponse<WishlistDTO>> CreateWishlistAsync(CreateWishlistDTO wishlistDto)
         {
+            // Extract the user ID from the JWT token
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return ServiceResponse<WishlistDTO>.FailureResponse("User ID not found.");
+            }
+
             var wishlist = new Wishlist
             {
-                Title = wishlistDto.Title
+                Title = wishlistDto.Title,
+                AppUserId = userId // Associate the wishlist with the authenticated user
             };
 
             await _wishlistRepository.AddAsync(wishlist);
+        
             return ServiceResponse<WishlistDTO>.SuccessResponse(new WishlistDTO
             {
                 Id = wishlist.Id,
