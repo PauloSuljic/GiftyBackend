@@ -26,7 +26,8 @@ namespace Gifty.Application.Services
             {
                 UserName = registerDto.Username,
                 Email = registerDto.Email,
-                FullName = registerDto.FullName
+                FullName = registerDto.FullName,
+                Birthday = registerDto.Birthday
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
