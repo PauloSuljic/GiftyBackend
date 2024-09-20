@@ -37,19 +37,6 @@ namespace Gifty.API.Controllers
             return Ok(response);
         }
 
-        // Add a friend for the logged-in user
-        [HttpPost]
-        public async Task<IActionResult> AddFriend(AddFriendDTO friendDto)
-        {
-            var userId = User.FindFirst("userId")?.Value; // Extract user ID from the token
-            var response = await _friendService.AddFriendAsync(userId, friendDto);
-            if (!response.Success)
-            {
-                return BadRequest(response.Message);
-            }
-            return Ok(response);
-        }
-
         // Remove a friend for the logged-in user
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveFriend(int id)
