@@ -20,9 +20,17 @@ namespace Gifty.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetWishlists()
         {
-            var wishlists = await _wishlistService.GetWishlistsAsync();
+            var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found.");
+            }
+
+            var wishlists = await _wishlistService.GetWishlistsByUserIdAsync(userId);
             return Ok(wishlists);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> CreateWishlist([FromBody] CreateWishlistDTO wishlistDto)

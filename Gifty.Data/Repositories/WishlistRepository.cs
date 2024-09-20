@@ -14,10 +14,13 @@ namespace Gifty.Data.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Wishlist>> GetAllAsync()
+        public async Task<IEnumerable<Wishlist>> GetByUserIdAsync(string userId)
         {
-            return await _context.Wishlists.ToListAsync();
+            return await _context.Wishlists
+                .Where(w => w.AppUserId == userId)
+                .ToListAsync();
         }
+
 
         public async Task<Wishlist> GetByIdAsync(int id)
         {

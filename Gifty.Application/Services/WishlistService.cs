@@ -20,9 +20,9 @@ namespace Gifty.Application.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ServiceResponse<IEnumerable<WishlistDTO>>> GetWishlistsAsync()
+        public async Task<ServiceResponse<IEnumerable<WishlistDTO>>> GetWishlistsByUserIdAsync(string userId)
         {
-            var wishlists = await _wishlistRepository.GetAllAsync();
+            var wishlists = await _wishlistRepository.GetByUserIdAsync(userId); // Adjust your repository method to fetch by userId
             var wishlistDtos = wishlists.Select(w => new WishlistDTO
             {
                 Id = w.Id,
@@ -31,6 +31,7 @@ namespace Gifty.Application.Services
 
             return ServiceResponse<IEnumerable<WishlistDTO>>.SuccessResponse(wishlistDtos, "Wishlists retrieved successfully.");
         }
+
 
         public async Task<ServiceResponse<WishlistDTO>> CreateWishlistAsync(CreateWishlistDTO wishlistDto)
         {
