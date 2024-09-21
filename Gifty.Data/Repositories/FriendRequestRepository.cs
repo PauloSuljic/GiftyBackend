@@ -42,4 +42,23 @@ public class FriendRequestRepository : IFriendRequestRepository
         _context.FriendRequests.Remove(request);
         await _context.SaveChangesAsync();
     }
+    
+    public async Task<IEnumerable<AppUser>> GetFriendsByUserIdAsync(string userId)
+    {
+        // Get the accepted friend requests where the user is either the sender or receiver
+        var friendRequests = await _context.FriendRequests
+            .Where(fr => (fr.SenderId == userId || fr.ReceiverId == userId) && fr.Status == RequestStatus.Accepted)
+            .ToListAsync();
+
+        // Extract the friend IDs
+        var friendIds = friendRequests
+            .Select(fr => fr.SenderId == userId ? fr.ReceiverId : fr.SenderId)
+            .ToList();
+
+        // Retrieve the users based on the friend IDs
+        return await _context.Users
+            .Where(u => friendIds.Contains(u.Id))
+            .ToListAsync();
+    }
+
 }
