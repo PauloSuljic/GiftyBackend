@@ -23,5 +23,12 @@ namespace Gifty.Data.Repositories
             return await _context.Users.ToListAsync();
         }
         
+        public async Task UpdateAsync(AppUser user)
+        {
+            _context.Users.Attach(user);
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+        
     }
 }
