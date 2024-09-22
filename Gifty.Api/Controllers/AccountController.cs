@@ -14,19 +14,5 @@ namespace Gifty.Api.Controllers
         {
             _userService = userService;
         }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDTO dto)
-        {
-            await _userService.RegisterAsync(dto);
-            return Ok("User registered successfully");
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO dto)
-        {
-            var token = await _userService.LoginAsync(dto);
-            return Ok(token);
-        }
     }
 }
