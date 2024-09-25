@@ -10,6 +10,7 @@ namespace Gifty.Application.Services
         Task<ServiceResponse<string>> RegisterAsync(RegisterDTO registerDto); // Returns JWT token on success
         Task<ServiceResponse<string>> LoginAsync(LoginDTO loginDto);          // Returns JWT token on success
         Task<ServiceResponse<AppUser>> UpdateProfileAsync(UpdateUserProfileDTO dto);
+        Task<bool> VerifyUserTokenAsync(AppUser user, string token, string purpose);
         void Logout();
     }
 }

@@ -17,25 +17,21 @@ namespace Gifty.Data.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Friend>> GetFriendsByUserIdAsync(string userId)
-        {
-            return await _context.Friends
-                .Where(f => f.UserId == userId)
-                .ToListAsync();
-        }
-
+        // Get a specific friend by ID and user ID (additional friend details, if needed)
         public async Task<Friend?> GetFriendByIdAndUserIdAsync(int friendId, string userId)
         {
             return await _context.Friends
                 .FirstOrDefaultAsync(f => f.Id == friendId && f.UserId == userId);
         }
 
+        // Add a new friend (if using a separate table for storing additional friend information)
         public async Task AddAsync(Friend friend)
         {
             await _context.Friends.AddAsync(friend);
             await _context.SaveChangesAsync();
         }
 
+        // Delete a friend
         public async Task DeleteAsync(Friend friend)
         {
             _context.Friends.Remove(friend);

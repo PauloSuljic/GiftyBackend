@@ -8,7 +8,9 @@ namespace Gifty.Application.Services
     public interface IFriendService
     {
         Task<ServiceResponse<IEnumerable<FriendDTO>>> GetFriendsForUserAsync(string userId);
-        Task<ServiceResponse<FriendDTO>> GetFriendByIdAsync(string userId, int friendId);
-        Task<ServiceResponse<string>> RemoveFriendAsync(string userId, int friendId);
+        Task<ServiceResponse<string>> RemoveFriendAsync(string userId, string friendId);
+        Task<ServiceResponse<FriendRequestDTO>> SendRequestAsync(string senderId, string receiverId);
+        Task<ServiceResponse<string>> RespondToRequestAsync(int requestId, bool accept);
+
     }
 }

@@ -6,7 +6,6 @@ using Gifty.Domain.Models;
 using Gifty.Domain.Repositories;
 using Gifty.Domain.Services;
 using Hangfire;
-using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,13 +17,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<AppUser, IdentityRole>()
+builder.Services.AddIdentity<AppUser, IdentityRole>(options => {
+        options.Password.RequireDigit = true;
+        options.Password.RequiredLength = 8;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = true;
+        options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
+        options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+    })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
 // Register application services
 builder.Services.AddTransient<EmailService>();
-
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -39,6 +45,26 @@ builder.Services.AddScoped<IWishlistItemRepository, WishlistItemRepository>();
 builder.Services.AddScoped<IWishlistItemService, WishlistItemService>();
 builder.Services.AddScoped<BirthdayReminderService, BirthdayReminderService>();
 
+// Add CORS services to the container
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        corsBuilder =>
+        {
+            corsBuilder.WithOrigins("http://localhost:4200") // Replace with your frontend domain
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+
+    // Add a policy for development/testing that allows any origin
+    options.AddPolicy("AllowAllOrigins",
+        corsBuilder =>
+        {
+            corsBuilder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -71,12 +97,18 @@ builder.Services.AddHangfire(config =>
 {
     config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
-// Add Hangfire server
 builder.Services.AddHangfireServer();
 
 // Build the application
 var app = builder.Build();
+
+// Step 2: Enable CORS in the request pipeline
+
+// Enable the specific CORS policy for production
+app.UseCors("AllowAllOrigins");
+
+// For development, use the more permissive policy (optional)
+// app.UseCors("AllowAllOrigins");
 
 // Configure Swagger middleware
 if (app.Environment.IsDevelopment())

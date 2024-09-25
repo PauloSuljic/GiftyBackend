@@ -6,7 +6,10 @@ namespace Gifty.Domain.Models
         public string UserId { get; set; }
         public string FriendId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string Status { get; set; } // Optional
+        public RequestStatus Status { get; set; } // Optional
+        public string FriendName { get; set; }
+        public DateTime FriendDOB { get; set; }
+        public string FriendImage { get; set; }
     }
 
 }

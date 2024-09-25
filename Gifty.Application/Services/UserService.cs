@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using Gifty.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Gifty.Application.Services
 {
@@ -17,6 +18,7 @@ namespace Gifty.Application.Services
         private readonly ITokenService _tokenService;
         private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly EmailService _emailService;
 
         public UserService(
             UserManager<AppUser> userManager, 
@@ -51,7 +53,21 @@ namespace Gifty.Application.Services
             }
 
             var token = _tokenService.CreateToken(user);
-            return ServiceResponse<string>.SuccessResponse(token, "User registered successfully.");
+            //return ServiceResponse<string>.SuccessResponse(token, "User registered successfully.");
+            
+            // Generate email confirmation token
+            var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+    
+            // Create a verification link (use frontend domain here for user redirection)
+            // Create a verification link that points to your backend API
+            var confirmationLink = $"https://yourbackenddomain.com/api/auth/confirm-email?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+
+
+            // Send verification email
+            await _emailService.SendEmailAsync(user.Email, "Confirm your email", $"Please confirm your email by clicking the following link: {confirmationLink}");
+
+            return ServiceResponse<string>.SuccessResponse("Registration successful. Please confirm your email.");
+
         }
 
         public async Task<ServiceResponse<string>> LoginAsync(LoginDTO loginDto)
@@ -107,6 +123,13 @@ namespace Gifty.Application.Services
         public void Logout()
         {
             _signInManager.SignOutAsync().Wait();
+        }
+        
+        public async Task<bool> VerifyUserTokenAsync(AppUser user, string token, string purpose)
+        {
+            // Verify the token
+            var result = await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, purpose, token);
+            return result;
         }
     }
 }
