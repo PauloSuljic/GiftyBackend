@@ -9,11 +9,11 @@ namespace Gifty.API.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FriendRequestController : ControllerBase
+    public class FriendsRequestController : ControllerBase
     {
         private readonly IFriendRequestService _friendRequestService;
 
-        public FriendRequestController(IFriendRequestService friendRequestService)
+        public FriendsRequestController(IFriendRequestService friendRequestService)
         {
             _friendRequestService = friendRequestService;
         }
@@ -41,7 +41,7 @@ namespace Gifty.API.Controllers
         [HttpGet("pending")]
         public async Task<IActionResult> GetPendingRequests()
         {
-            var userId = User.FindFirst("userId")?.Value; // Extract user ID from the token
+            var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value; // Extract user ID from the token
             var response = await _friendRequestService.GetPendingRequestsAsync(userId);
             return Ok(response);
         }
