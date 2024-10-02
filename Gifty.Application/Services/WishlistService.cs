@@ -32,6 +32,28 @@ namespace Gifty.Application.Services
             return ServiceResponse<IEnumerable<WishlistDTO>>.SuccessResponse(wishlistDtos, "Wishlists retrieved successfully.");
         }
 
+        public async Task<ServiceResponse<WishlistDTO>> GetWishlistByIdAsync(int id)
+        {
+            // Fetch the wishlist from the repository by its ID
+            var wishlist = await _wishlistRepository.GetByIdAsync(id);
+
+            // Check if the wishlist exists
+            if (wishlist == null)
+            {
+                return ServiceResponse<WishlistDTO>.FailureResponse("Wishlist not found.");
+            }
+
+            // Map the wishlist entity to WishlistDTO
+            var wishlistDto = new WishlistDTO
+            {
+                Id = wishlist.Id,
+                Title = wishlist.Title
+            };
+
+            return ServiceResponse<WishlistDTO>.SuccessResponse(wishlistDto, "Wishlist retrieved successfully.");
+        }
+
+
 
         public async Task<ServiceResponse<WishlistDTO>> CreateWishlistAsync(CreateWishlistDTO wishlistDto)
         {

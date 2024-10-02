@@ -30,7 +30,19 @@ namespace Gifty.API.Controllers
             var wishlists = await _wishlistService.GetWishlistsByUserIdAsync(userId);
             return Ok(wishlists);
         }
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetWishlistById(int id)
+        {
+            var wishlist = await _wishlistService.GetWishlistByIdAsync(id);
 
+            if (wishlist == null)
+            {
+                return NotFound($"Wishlist with ID {id} not found.");
+            }
+
+            return Ok(wishlist);
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateWishlist([FromBody] CreateWishlistDTO wishlistDto)

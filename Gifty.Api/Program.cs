@@ -31,6 +31,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options => {
 
 // Register application services
 builder.Services.AddTransient<EmailService>();
+builder.Services.AddSingleton<AmazonProductService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -71,6 +72,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHangfire(x => x.UseSqlServerStorage("DefaultConnection"));
 builder.Services.AddHangfireServer();
+
+builder.Services.Configure<AwsSettings>(
+    builder.Configuration.GetSection("AmazonSettings"));
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
