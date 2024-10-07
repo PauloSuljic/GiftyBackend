@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Gifty.Application.DTOs;
 using Gifty.Application.Services;
@@ -17,10 +18,11 @@ namespace Gifty.API.Controllers
             _wishlistService = wishlistService;
         }
 
+        // Get wishlists for the logged-in user
         [HttpGet]
         public async Task<IActionResult> GetWishlists()
         {
-            var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -30,8 +32,9 @@ namespace Gifty.API.Controllers
             var wishlists = await _wishlistService.GetWishlistsByUserIdAsync(userId);
             return Ok(wishlists);
         }
-        
-        [HttpGet("{id}")]
+
+        // Get a specific wishlist by ID
+        [HttpGet("wishlist/{id:int}")]  // Explicitly say this route is for int IDs
         public async Task<IActionResult> GetWishlistById(int id)
         {
             var wishlist = await _wishlistService.GetWishlistByIdAsync(id);
@@ -42,6 +45,14 @@ namespace Gifty.API.Controllers
             }
 
             return Ok(wishlist);
+        }
+
+        // Get all wishlists for a specific user by userId
+        [HttpGet("user/{userId}")]  // Prefix the route for user-related actions
+        public async Task<IActionResult> GetWishlistByUserId(string userId)
+        {
+            var wishlists = await _wishlistService.GetWishlistsByUserIdAsync(userId);
+            return Ok(wishlists);
         }
 
         [HttpPost]
