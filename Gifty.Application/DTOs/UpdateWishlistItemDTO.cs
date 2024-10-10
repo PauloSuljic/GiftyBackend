@@ -1,6 +1,6 @@
 namespace Gifty.Application.DTOs
 {
-    public class CreateWishlistItemDTO
+    public class UpdateWishlistItemDTO
     {
         public string Name { get; set; }
         public string Link { get; set; }

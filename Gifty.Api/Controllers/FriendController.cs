@@ -23,38 +23,25 @@ namespace Gifty.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetFriends()
         {
-            var userId = User.FindFirst("userId")?.Value; // Extract user ID from the token
+            var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value; // Extract user ID from the token
             var response = await _friendService.GetFriendsForUserAsync(userId);
             return Ok(response);
         }
 
         // Get a specific friend by ID for the logged-in user
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetFriend(int id)
+        public async Task<IActionResult> GetFriend(string id)
         {
-            var userId = User.FindFirst("userId")?.Value; // Extract user ID from the token
-            var response = await _friendService.GetFriendByIdAsync(userId, id);
-            return Ok(response);
-        }
-
-        // Add a friend for the logged-in user
-        [HttpPost]
-        public async Task<IActionResult> AddFriend(AddFriendDTO friendDto)
-        {
-            var userId = User.FindFirst("userId")?.Value; // Extract user ID from the token
-            var response = await _friendService.AddFriendAsync(userId, friendDto);
-            if (!response.Success)
-            {
-                return BadRequest(response.Message);
-            }
+            var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value; // Extract user ID from the token
+            var response = "not implemented";
             return Ok(response);
         }
 
         // Remove a friend for the logged-in user
         [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveFriend(int id)
+        public async Task<IActionResult> RemoveFriend(string id)
         {
-            var userId = User.FindFirst("userId")?.Value; // Extract user ID from the token
+            var userId = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value; // Extract user ID from the token
             var response = await _friendService.RemoveFriendAsync(userId, id);
             if (!response.Success)
             {

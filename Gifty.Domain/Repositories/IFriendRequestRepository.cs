@@ -9,4 +9,7 @@ public interface IFriendRequestRepository
     Task AddRequestAsync(FriendRequest request);
     Task UpdateRequestAsync(FriendRequest request);
     Task DeleteRequestAsync(FriendRequest request);
+    Task<IEnumerable<FriendRequest>> GetConfirmedRequestsForUserAsync(string userId);
+    Task<FriendRequest> GetRequestBetweenUsersAsync(string userId1, string userId2);
+    Task<FriendRequest> GetAcceptedRequestBetweenUsersAsync(string userId1, string userId2);
 }

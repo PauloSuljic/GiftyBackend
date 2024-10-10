@@ -6,7 +6,7 @@ namespace Gifty.Data.Repositories
 {
     public interface IWishlistRepository
     {
-        Task<IEnumerable<Wishlist>> GetAllAsync();
+        Task<IEnumerable<Wishlist>> GetByUserIdAsync(string userId);
         Task<Wishlist> GetByIdAsync(int id);
         Task AddAsync(Wishlist wishlist);
         Task UpdateAsync(Wishlist wishlist);
