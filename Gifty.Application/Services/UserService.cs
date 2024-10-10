@@ -131,5 +131,17 @@ namespace Gifty.Application.Services
             var result = await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, purpose, token);
             return result;
         }
+        
+        public async Task<List<UserDTO>> GetAllUsersAsync()
+        {
+            var users = await _userRepository.GetAllAsync();
+            return users.Select(user => new UserDTO
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                // Other properties
+            }).ToList();
+        }
     }
 }

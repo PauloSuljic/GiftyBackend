@@ -12,5 +12,6 @@ namespace Gifty.Application.Services
         Task<ServiceResponse<AppUser>> UpdateProfileAsync(UpdateUserProfileDTO dto);
         Task<bool> VerifyUserTokenAsync(AppUser user, string token, string purpose);
         void Logout();
+        Task<List<UserDTO>> GetAllUsersAsync();
     }
 }

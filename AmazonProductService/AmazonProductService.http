@@ -1,6 +1,0 @@
-@AmazonProductService_HostAddress = http://localhost:5050
-
-GET {{AmazonProductService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
